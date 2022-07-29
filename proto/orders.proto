@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "orders/pb";
+
+message Order {
+  string name = 1;
+  string category = 2;
+  int32 quantity = 3;
+  float price = 4;
+  optional string menu = 5;
+}
+
+message GetOrderListRequest {}
+message GetOrderListResponse { repeated Order orders = 1; }
+
+service Inventory {
+  rpc GetOrderList(GetOrderListRequest) returns (GetOrderListResponse) {}
+  
+}
