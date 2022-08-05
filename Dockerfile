@@ -6,6 +6,7 @@ ENV GO111MODULE=on \
 
 WORKDIR /app
 COPY . .
+RUN apk add build-base
 RUN go mod download && go mod tidy -go=1.18
 EXPOSE 8001 9001
 HEALTHCHECK --interval=5m --timeout=3s CMD curl --fail http://localhost:8001/ || exit 1
@@ -19,8 +20,8 @@ ENV GO111MODULE=on \
 
 COPY --from=development /app/ /app/
 WORKDIR  /app
+RUN apk add build-base
 RUN go build -o app 
-RUN apt-get install build-essential
 
 FROM alpine:3.16 AS production
 
@@ -30,4 +31,3 @@ USER nobody:nobody
 
 HEALTHCHECK --interval=5m --timeout=3s CMD curl --fail http://localhost:8001/ || exit 1
 ENTRYPOINT ["/usr/local/app"]
-
