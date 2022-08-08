@@ -1,3 +1,5 @@
+
+
 # orders
 
 initialize go project
@@ -31,3 +33,7 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 https://yusufs.medium.com/getting-started-with-kafka-in-golang-14ccab5fa26
 sudo apt-get install build-essential
 go get github.com/confluentinc/confluent-kafka-go/kafka
+
+for librdkafka undefined reference to `__rawmemchr' -> CMD ["go", "run", "-tags", "musl", "."]
+https://github.com/confluentinc/confluent-kafka-go/issues/454
+https://github.com/confluentinc/confluent-kafka-go-example/blob/master/README.md

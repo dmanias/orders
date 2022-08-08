@@ -8,9 +8,9 @@ WORKDIR /app
 COPY . .
 RUN apk add build-base
 RUN go mod download && go mod tidy -go=1.18
-EXPOSE 8001 9001
+EXPOSE 8001 9092
 HEALTHCHECK --interval=5m --timeout=3s CMD curl --fail http://localhost:8001/ || exit 1
-CMD ["go", "run", "."]
+CMD ["go", "run", "-tags", "musl", "."]
 
 FROM golang:1.18.3-alpine3.16 AS build
 ENV GO111MODULE=on \

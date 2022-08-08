@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	pb "github.com/pampatzoglou/orders/orders/pb"
 
@@ -22,9 +23,18 @@ import (
 // produce
 func produce(messages string, topicName string) {
 	fmt.Printf("Starting producer...")
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:9092"})
+	/*	p, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": "localhost:9092"})
+	*/
+
+	p, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": "localhost:9092",
+		// "client.id":         socket.gethostname(),
+		"client.id": "test",
+		"acks":      "all"})
 	if err != nil {
-		panic(err)
+		fmt.Printf("Failed to create producer: %s\n", err)
+		os.Exit(1)
 	}
 
 	defer p.Close()
@@ -62,6 +72,7 @@ type Data struct {
 	Source      string
 	Destination string
 }
+
 // end kafka
 
 //grpc
@@ -75,25 +86,25 @@ func (s *server) GetOrderList(ctx context.Context, in *pb.GetOrderListRequest) (
 		Orders: getSampleOrders(),
 	}, nil
 }
+
 // end grpc
 
 func main() {
 
-//kafka
-topicName := "myTopic"
+	//kafka
+	topicName := "myTopic"
 
-data := []Data{
-	{Id: 2, Message: "World", Source: "1", Destination: "A"},
-	{Id: 2, Message: "Earth", Source: "1", Destination: "B"},
-	{Id: 2, Message: "Planets", Source: "2", Destination: "C"},
-}
-stringJson, _ := json.Marshal(data)
+	data := []Data{
+		{Id: 2, Message: "World", Source: "1", Destination: "A"},
+		{Id: 2, Message: "Earth", Source: "1", Destination: "B"},
+		{Id: 2, Message: "Planets", Source: "2", Destination: "C"},
+	}
+	stringJson, _ := json.Marshal(data)
 
-fmt.Println(string(stringJson))
+	fmt.Println(string(stringJson))
 
-produce(string(stringJson), topicName)
-//end kafka
-
+	produce(string(stringJson), topicName)
+	//end kafka
 
 	listener, err := net.Listen("tcp", ":8001")
 	if err != nil {
